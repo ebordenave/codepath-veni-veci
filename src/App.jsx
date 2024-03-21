@@ -12,7 +12,7 @@ function App() {
     fetchImage()
   }, [])
 
-  console.log("test", import.meta.env.VITE_DOG_APP_API_KEY)
+  // console.log("test", import.meta.env.VITE_DOG_APP_API_KEY)
 
   const fetchImage = () => {
     const URL = "https://api.thedogapi.com/v1/images/search"
