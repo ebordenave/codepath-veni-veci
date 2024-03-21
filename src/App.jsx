@@ -1,33 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+// import { useState } from 'react'
+import axios from 'axios'
 import './App.css'
+import {Button} from "./components/Button/Button.jsx";
+import {useEffect, useState} from "react";
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [image, setImage] = useState("")
+
+  useEffect(() => {
+    fetchImage()
+  }, [])
+
+  console.log("test", import.meta.env.VITE_DOG_APP_API_KEY)
+
+  const fetchImage = () => {
+    const URL = "https://api.thedogapi.com/v1/images/search"
+
+    axios.get(URL)
+      .then((res) => {
+        setImage(res.data[0].url)
+      })
+      .catch((error) => {
+        console.log(new Error(error))
+      })
+  }
+
+
+  const getImage = (e) => {
+    e.preventDefault()
+    fetchImage()
+  }
+
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Button text="Discover"/>
+      <img src={image}
+           alt="Dog"/>
+      <button onClick={getImage}>CLICK ME</button>
     </>
   )
 }
