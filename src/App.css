@@ -41,6 +41,34 @@
   color: #888;
 }
 
-body {
-  background-image: url("https://wallpaperset.com/w/full/6/f/c/412158.jpg");
+/*body {*/
+/*  background-image: url("https://wallpaperset.com/w/full/6/f/c/412158.jpg");*/
+/*}*/
+
+.image-wrapper{
+  border-radius: 15px;
+  background-color: #f9f9f9;
+  display: grid;
+  height: 620px;
+  width: 450px;
+  padding: 20px 20px 0 20px;
+}
+
+.image-container {
+  /*background-color: white;*/
+  height: 450px;
+  object-fit: contain;
+}
+
+.image-container img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
 }
