@@ -1,85 +1,88 @@
-// import { useState } from 'react'
 import axios from 'axios'
 import './App.css'
 import {DS_Button} from "./components/Button/DS_Button.jsx";
 import {useEffect, useState} from "react";
 import {ImageGallery} from "./components/ImageGallery/ImageGallery.jsx";
-import {
-  AttributesButton
-} from "./components/AttributesButton/AttributesButton.jsx";
+import {AttributesButton} from "./components/AttributesButton/AttributesButton.jsx";
+import {BanList} from "./components/BanList/BanList.jsx";
 
-
-function App() {
+const App = () => {
   const [image, setImage] = useState("")
-  const [breed, setBreed] = useState("")
+  const [attributes, setAttributes] = useState({
+    breed: "",
+    weight: [],
+    breedGroup: [],
+    lifeSpan: []
+  })
   const [banList, setBanList] = useState([])
-  // const [favorites, setFavorites] = useState([])
-  // const [dislikeList, setDislikeList] = useState([])
-  // const [response, setResponse] = useState("")
+  const [seenList, setSeenList] = useState([])
 
   const API_KEY = import.meta.env.VITE_DOG_APP_API_KEY
 
   useEffect(() => {
     fetchImage()
-  },[])
-
-  useEffect(() => {
-    console.log(banList)
   }, [banList])
 
+  const fetchImage = async () => {
+    const URL = `https://api.thedogapi.com/v1/images/search?has_breeds=1&api_key=${API_KEY}`;
 
-  const fetchImage = () => {
-    const URL = `https://api.thedogapi.com/v1/images/search?api_key=${API_KEY}`
+    try {
+      const response = await axios.get(URL);
+      const responseData = response.data.filter((dog) => {
+        const {name, weight, breed_group, life_span} = dog.breeds[0];
+        const dogAttributes = [name, weight.imperial, breed_group, life_span];
+        return !dogAttributes.some((attribute) => banList.includes(attribute));
+      });
 
-    axios
-      .get(URL)
-      .then((res) => {
-        const filteredData = res.data.filter((dog) => dog.breeds && dog.breeds.length > 0 && !banList.includes(dog.breeds[0].name))
-        if (filteredData.length > 0) {
-          // setResponse(res.data)
-          setImage(filteredData[0].url)
-          setBreed(filteredData[0].breeds[0].name)
-        }
-      })
-      .catch((error) => {
-        console.log(new Error(error))
-      })
-  }
+      console.log("👀", responseData[0])
+      console.log(banList)
 
-  const addToBanList = (breed) => {
-    setBanList((prevBanList) => {
-      return [...prevBanList, breed];
-    });
+      if (responseData.length > 0) {
+        const {url, breeds} = responseData[0];
+        const {name, weight, breed_group, life_span} = breeds[0];
+        setImage(url);
+        setAttributes({
+          breed: name,
+          weight: weight.imperial,
+          breedGroup: breed_group,
+          lifeSpan: life_span
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching image data:", error);
+    }
   };
 
+  const addToSeenList = (breedName) => {
+    setSeenList((prevSeenList) => [...prevSeenList, breedName]);
+  }
+
+  const addToBanList = (attribute) => {
+    setBanList((prevBanList) => [...prevBanList, attribute]);
+  };
 
   const getImage = (e) => {
     e.preventDefault()
     fetchImage()
   }
 
-
   return (
     <>
       <ImageGallery onClick={getImage}/>
       <div className="image-wrapper">
         <div className="image-container">
-          <img src={image}
-               alt="Dog"/>
+          <img src={image} alt="Dog"/>
         </div>
-
-        <div className="button-container"></div>
-          <div><DS_Button onClick={getImage}
-                          text="Discover"
-                          backgroundColor="lightblue"/></div>
+        <div className="button-container">
+          {Object.entries(attributes).map(([key, value]) => (
+            <AttributesButton key={key} attribute={value} backgroundColor="orange" onClick={()=> addToBanList(value)}/>
+          ))}
         </div>
-      <div>
-        <AttributesButton attribute={breed} backgroundColor="orange" onClick={()=> addToBanList(breed)}/>
-        <AttributesButton attribute={breed} backgroundColor="orange"/>
-        <AttributesButton attribute={breed} backgroundColor="orange"/>
-        <AttributesButton attribute={breed} backgroundColor="orange"/>
+        <div>
+          <DS_Button onClick={getImage} text="Discover" backgroundColor="lightblue"/>
+        </div>
       </div>
-
+      <BanList list={banList}/>
     </>
   )
 }
