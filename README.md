@@ -4,7 +4,7 @@ Submitted by: **Edward Bordenave**
 
 This web app: **Dog Search App**
 
-Time spent: **X** hours spent in total
+Time spent: **15** hours spent in total
 
 ## Required Features
 
@@ -45,7 +45,11 @@ GIF created with imgur
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+Challenges faced:
+- I had difficulty understanding the structure of the JSON data returned from the API. I had to console.log the data to understand how to access the attributes I wanted to display.
+- Retrieving nested data proved difficult
+- I don't think I properly fetched data with axios. It works but I feel like there is a better pattern I could have followed.
+- My original plan was to use a different API but after running into some difficulties, I switched to the Dog API.
 
 ## License
 
