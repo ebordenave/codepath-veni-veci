@@ -3,8 +3,11 @@ import './App.css'
 import {DS_Button} from "./components/Button/DS_Button.jsx";
 import {useEffect, useState} from "react";
 import {ImageGallery} from "./components/ImageGallery/ImageGallery.jsx";
-import {AttributesButton} from "./components/AttributesButton/AttributesButton.jsx";
+import {
+  AttributesButton
+} from "./components/AttributesButton/AttributesButton.jsx";
 import {BanList} from "./components/BanList/BanList.jsx";
+import {SeenList} from "./components/SeenList/SeenList.jsx";
 
 const App = () => {
   const [image, setImage] = useState("")
@@ -19,9 +22,9 @@ const App = () => {
 
   const API_KEY = import.meta.env.VITE_DOG_APP_API_KEY
 
-  useEffect(() => {
-    fetchImage()
-  }, [banList])
+  // useEffect(() => {
+  //   fetchImage()
+  // }, [])
 
   const fetchImage = async () => {
     const URL = `https://api.thedogapi.com/v1/images/search?has_breeds=1&api_key=${API_KEY}`;
@@ -34,8 +37,8 @@ const App = () => {
         return !dogAttributes.some((attribute) => banList.includes(attribute));
       });
 
-      console.log("👀", responseData[0])
-      console.log(banList)
+      // console.log("👀", responseData[0])
+      // console.log(banList)
 
       if (responseData.length > 0) {
         const {url, breeds} = responseData[0];
@@ -47,6 +50,7 @@ const App = () => {
           breedGroup: breed_group,
           lifeSpan: life_span
         });
+        addToSeenList(name)
       }
     } catch (error) {
       console.error("Error fetching image data:", error);
@@ -58,7 +62,10 @@ const App = () => {
   }
 
   const addToBanList = (attribute) => {
-    setBanList((prevBanList) => [...prevBanList, attribute]);
+    setBanList((prevBanList) => {
+      return [...prevBanList, attribute]
+    });
+
   };
 
   const getImage = (e) => {
@@ -82,7 +89,10 @@ const App = () => {
           <DS_Button onClick={getImage} text="Discover" backgroundColor="lightblue"/>
         </div>
       </div>
-      <BanList list={banList}/>
+      <div className="list-container">
+        <SeenList list={seenList}/>
+        <BanList list={banList}/>
+      </div>
     </>
   )
 }
